@@ -2,13 +2,14 @@ package com.fincatto.documentofiscal.gnre.classes.nota;
 
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Text;
 
 public class DocumentoOrigem {
 
     @Attribute(name = "tipo")
     private String identificador;
 
-    @Element(name = "documentoOrigem")
+    @Text
     private String documentoOrigem;
 
     public DocumentoOrigem() {

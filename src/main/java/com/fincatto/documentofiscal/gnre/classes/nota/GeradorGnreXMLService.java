@@ -1,6 +1,5 @@
-package com.fincatto.documentofiscal.gnre.classes.nota.teste;
+package com.fincatto.documentofiscal.gnre.classes.nota;
 
-import com.fincatto.documentofiscal.gnre.classes.nota.*;
 import com.fincatto.documentofiscal.nfe400.classes.nota.NFNotaInfoDestinatario;
 import com.fincatto.documentofiscal.nfe400.classes.nota.NFNotaInfoEmitente;
 import com.fincatto.documentofiscal.nfe400.classes.nota.NFNotaProcessada;
@@ -17,9 +16,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,37 +27,26 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
-public class Testes {
-    public static void main(String[] args) {
-        try {
-            String caminhoArquuivo = "C:/tmp/gnre/nfe-41220443729897000100550010000002811889400360.xml";
-            Calendar hoje = Calendar.getInstance();
-            String caminhoArquuivo02 = "C:/tmp/gnre/guia.xml";
-            String arquivoString = lerArquivoXMLComoString(caminhoArquuivo);
+public class GeradorGnreXMLService {
 
-            final NFNotaProcessada notaProcessada = new DFPersister().read(NFNotaProcessada.class, arquivoString);
-            System.out.println(notaProcessada.getNota().getInfo().getChaveAcesso());
+    public static String gerarXMLGnreString(String xmlNotaOriginal){
+        try {
+            final NFNotaProcessada notaProcessada = new DFPersister().read(NFNotaProcessada.class, xmlNotaOriginal);
             LoteGuia novoLote = new LoteGuia();
             Gnre gnre = gerarGuia(notaProcessada);
             List<Guias> guias = new ArrayList<>();
             guias.add(new Guias(gnre));
             novoLote.setGuias(guias);
 
-            System.out.println(GnreXMLValidator.validaGnreLote(novoLote.toString()));
-
-            System.out.println(novoLote.toString());
-
+            if(GnreXMLValidator.validaGnreLote(novoLote.toString())){
+                return novoLote.toString();
+            }
+            return null;
             //gerarXML(novoLote, caminhoArquuivo02);
-
         } catch (Exception e) {
-            System.out.println(e);
             throw new RuntimeException(e);
         }
 
-
-
-
-       // novoLote.setGuias();
     }
 
     public static String lerArquivoXMLComoString(String caminhoArquivo) throws Exception {

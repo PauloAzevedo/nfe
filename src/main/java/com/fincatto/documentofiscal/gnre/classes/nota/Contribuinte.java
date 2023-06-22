@@ -9,22 +9,22 @@ public class Contribuinte {
     @Element(name = "identificacao")
     private IdentificaoContribuite identificaoContribuite;
 
-    @Element(name = "razaoSocial")
+    @Element(name = "razaoSocial", required = false)
     private String razaoSocial;
 
-    @Element(name = "endereco")
+    @Element(name = "endereco", required = false)
     private String endereco;
 
-    @Element(name = "municipio")
+    @Element(name = "municipio", required = false)
     private String municipio;
 
-    @Element(name = "uf")
+    @Element(name = "uf", required = false)
     private String uf;
 
-    @Element(name = "cep")
+    @Element(name = "cep", required = false)
     private String cep;
 
-    @Element(name = "telefone")
+    @Element(name = "telefone", required = false)
     private String telefone;
 
     public Contribuinte() {

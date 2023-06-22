@@ -6,10 +6,10 @@ import org.simpleframework.xml.Root;
 @Root(name = "identificacao")
 public class IdentificaoContribuite {
 
-    @Element(name = "CNPJ")
+    @Element(name = "CNPJ", required = false)
     private String cnpj;
 
-    @Element(name = "CPF")
+    @Element(name = "CPF", required = false)
     private String cpf;
 
     public IdentificaoContribuite() {

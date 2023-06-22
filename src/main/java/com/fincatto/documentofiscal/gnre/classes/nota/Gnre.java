@@ -1,11 +1,15 @@
 package com.fincatto.documentofiscal.gnre.classes.nota;
 
 import com.fincatto.documentofiscal.nfe400.classes.nota.NFNotaInfoEmitente;
+import com.fincatto.documentofiscal.utils.DFPersister;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
+import org.simpleframework.xml.core.Persister;
 
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Root(name = "TDadosGNRE")
@@ -22,8 +26,8 @@ public class Gnre {
     @Element(name = "contribuinteEmitente")
     private Contribuinte contribuinteEmitente;
 
-    @ElementList(entry = "itensGNRE", inline = true)
-    private List<ItemGnre> itemGnreList;
+    @ElementList(entry = "item",name = "itensGNRE", type = ItemGnre.class)
+    private ArrayList<ItemGnre> itemGnreList;
 
     @Element(name = "valorGNRE")
     private String valorGNRE;
@@ -70,7 +74,7 @@ public class Gnre {
         return itemGnreList;
     }
 
-    public void setItemGnreList(List<ItemGnre> itemGnreList) {
+    public void setItemGnreList(ArrayList<ItemGnre> itemGnreList) {
         this.itemGnreList = itemGnreList;
     }
 
@@ -90,5 +94,14 @@ public class Gnre {
         this.dataPagamento = dataPagamento;
     }
 
-
+    @Override
+    public String toString() {
+        final Persister persister = new DFPersister();
+        try (StringWriter writer = new StringWriter()) {
+            persister.write(this, writer);
+            return writer.toString();
+        } catch (final Exception e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
 }
