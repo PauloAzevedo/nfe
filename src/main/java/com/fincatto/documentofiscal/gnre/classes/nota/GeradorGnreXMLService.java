@@ -16,6 +16,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.beans.BeanProperty;
 import java.io.File;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -93,12 +94,12 @@ public class GeradorGnreXMLService {
         ZonedDateTime data = nfNotaProcessada.getNota().getInfo().getIdentificacao().getDataHoraSaidaOuEntrada() !=null ? nfNotaProcessada.getNota().getInfo().getIdentificacao().getDataHoraSaidaOuEntrada(): nfNotaProcessada.getNota().getInfo().getIdentificacao().getDataHoraEmissao();
         gnre.setDataPagamento(calendarToStringWeb(zonedDateTimeToCalendar(data)));
         gnre.setValorGNRE(verificarValorTotalGnre(nfNotaProcessada));
-        ArrayList<ItemGnre> itemGnreList = gerarItensGNRE(nfNotaProcessada);
+        ArrayList<ItemGnre> itemGnreList = gerarItensGNRE_RJ(nfNotaProcessada);
         gnre.setItemGnreList(itemGnreList);
         return gnre;
     }
 
-    private static ArrayList<ItemGnre> gerarItensGNRE(NFNotaProcessada nfNotaProcessada) {
+    private static ArrayList<ItemGnre> gerarItensGNRE_RJ(NFNotaProcessada nfNotaProcessada) {
         ArrayList<ItemGnre> itensGnre = new ArrayList<>();
         ItemGnre itemGnre = new ItemGnre();
         itemGnre.setReceita(ReceitaEnum._100102.getCodigo());
@@ -114,6 +115,37 @@ public class GeradorGnreXMLService {
             documentoOrigem.setDocumentoOrigem(nfNotaProcessada.getNota().getInfo().getIdentificacao().getNumeroNota());
             itemGnre.setDocumentoOrigem(documentoOrigem);
         }
+        ZonedDateTime data = nfNotaProcessada.getNota().getInfo().getIdentificacao().getDataHoraSaidaOuEntrada() !=null ? nfNotaProcessada.getNota().getInfo().getIdentificacao().getDataHoraSaidaOuEntrada(): nfNotaProcessada.getNota().getInfo().getIdentificacao().getDataHoraEmissao();
+        itemGnre.setDataVencimento(calendarToStringWeb(zonedDateTimeToCalendar(data)));
+        BigDecimal valorIcmsFCP = converterEmBigDecimal(nfNotaProcessada.getNota().getInfo().getTotal().getIcmsTotal().getValorICMSFundoCombatePobreza());
+        BigDecimal valorIcmsPartilhaDestino = converterEmBigDecimal(nfNotaProcessada.getNota().getInfo().getTotal().getIcmsTotal().getValorICMSPartilhaDestinatario());
+        List<Valor> valores = new ArrayList<>();
+        Valor valor11 = new Valor();
+        valor11.setValor(String.valueOf(arredondarComDuasCasas(valorIcmsPartilhaDestino.doubleValue())));
+        valor11.setIdentificador("11");
+        valores.add(valor11);
+        if(valorIcmsFCP.compareTo(BigDecimal.ZERO) > 0){
+            Valor valor12 = new Valor();
+            valor12.setValor(String.valueOf(arredondarComDuasCasas(valorIcmsFCP.doubleValue())));
+            valor12.setIdentificador("12");
+            valores.add(valor12);
+        }
+        itemGnre.setValor(valores);
+        itemGnre.setContribuinteDestinatario(getDestinatario(nfNotaProcessada.getNota().getInfo().getDestinatario()));
+        itemGnre.setCamposExtras(gerarCamposExtras(nfNotaProcessada));
+        itensGnre.add(itemGnre);
+        return itensGnre;
+    }
+
+    private static ArrayList<ItemGnre> gerarItensGNRE_AC(NFNotaProcessada nfNotaProcessada) {
+        ArrayList<ItemGnre> itensGnre = new ArrayList<>();
+        ItemGnre itemGnre = new ItemGnre();
+
+        DocumentoOrigem documentoOrigem = new DocumentoOrigem();
+        documentoOrigem.setIdentificador("10");
+        documentoOrigem.setDocumentoOrigem(nfNotaProcessada.getNota().getInfo().getIdentificacao().getNumeroNota());
+        itemGnre.setDocumentoOrigem(documentoOrigem);
+
         ZonedDateTime data = nfNotaProcessada.getNota().getInfo().getIdentificacao().getDataHoraSaidaOuEntrada() !=null ? nfNotaProcessada.getNota().getInfo().getIdentificacao().getDataHoraSaidaOuEntrada(): nfNotaProcessada.getNota().getInfo().getIdentificacao().getDataHoraEmissao();
         itemGnre.setDataVencimento(calendarToStringWeb(zonedDateTimeToCalendar(data)));
         BigDecimal valorIcmsFCP = converterEmBigDecimal(nfNotaProcessada.getNota().getInfo().getTotal().getIcmsTotal().getValorICMSFundoCombatePobreza());
