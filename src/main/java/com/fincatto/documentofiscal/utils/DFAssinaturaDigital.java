@@ -54,6 +54,7 @@ public class DFAssinaturaDigital implements DFLog {
         for (final String tag : DFAssinaturaDigital.ELEMENTOS_ASSINAVEIS) {
             final NodeList elements = document.getElementsByTagName(tag);
             if (elements.getLength() > 0) {
+                System.out.println(elements.item(0).getAttributes().toString());
                 validateContext.setIdAttributeNS((Element) elements.item(0), null, "Id");
             }
         }
