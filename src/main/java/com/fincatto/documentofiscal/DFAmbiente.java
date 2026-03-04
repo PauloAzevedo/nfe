@@ -3,7 +3,8 @@ package com.fincatto.documentofiscal;
 public enum DFAmbiente {
 
     PRODUCAO("1", "Produ\u00e7\u00e3o"),
-    HOMOLOGACAO("2", "Homologa\u00e7\u00e3o");
+    HOMOLOGACAO("2", "Homologa\u00e7\u00e3o"),
+    ESPELHO("3", "Espelho");
 
     private final String codigo;
     private final String descricao;
